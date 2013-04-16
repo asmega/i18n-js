@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require "spec_helper"
 
 if File.basename(Rails.root) != "tmp"
@@ -186,6 +187,12 @@ describe SimplesIdeias::I18n do
 
     it "skips support" do
       SimplesIdeias::I18n.should_not have_asset_pipeline
+    end
+  end
+
+  describe "#escape_json" do
+    it "escapes UTF8 strings to avoid breaking sprockets" do
+      SimplesIdeias::I18n.escape_json("£€").should == '\\u00a3\\u20ac'
     end
   end
 

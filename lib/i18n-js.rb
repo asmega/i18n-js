@@ -48,6 +48,13 @@ module SimplesIdeias
       end
     end
 
+    def escape_json(json)
+      json = json.encode(::Encoding::UTF_8, :undef => :replace).force_encoding(::Encoding::BINARY)
+      json.gsub(/([\xC0-\xDF][\x80-\xBF]|[\xE0-\xEF][\x80-\xBF]{2}|[\xF0-\xF7][\x80-\xBF]{3})+/nx) do |s|
+        s.unpack("U*").pack("n*").unpack("H*")[0].gsub(/.{4}/n, '\\\\u\&')
+      end
+    end
+
     def segments_per_locale(pattern,scope)
       ::I18n.available_locales.each_with_object({}) do |locale,segments|
         result = scoped_translations("#{locale}.#{scope}")
